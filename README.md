@@ -1,5 +1,5 @@
 # QGIS-CPP-API-QT5
-### QGIS-QT-INTEGRATION-SETUP-ON-UBUNTU
+### QGIS QT5 INTEGRATION SETUP ON UBUNTU
 [QGIS Qt5 Installation Guide](https://github.com/aman2000jaiswal14/QGIS-CPP-API-QT5/blob/main/readmeQGISQtInstall.md)
 
 # Installation Guide
