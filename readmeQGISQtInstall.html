@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        pre {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        ul {
+            margin-bottom: 10px;
+        }
+        li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Installation Guide</h1>
+
+    <h2>PART A: Steps to Install Qt</h2>
+
+    <ol>
+        <li>Install necessary dependencies:
+            <pre><code>sudo apt install libxcb-cursor0 libxcb-cursor-dev</code></pre>
+        </li>
+
+        <li>Run the Qt Online Installer:
+            <pre><code>./qt-online-installer-linux-x64-4.8.1.run --mirror http://www.nic.funet.fi/pub/mirrors/download.qt-project.org</code></pre>
+        </li>
+
+        <li>In the Qt Online Installer, choose the 5.15.1 version of Qt from the archive filter.</li>
+    </ol>
+
+    <h2>PART B: QGIS Setup</h2>
+
+    <h3>Steps to Install QGIS</h3>
+
+    <ol>
+        <li>Install necessary dependencies:
+            <pre><code>sudo apt install gnupg software-properties-common</code></pre>
+            <pre><code>sudo mkdir -m755 -p /etc/apt/keyrings</code></pre>
+            <pre><code>sudo wget -O /etc/apt/keyrings/qgis-archive-keyring.gpg https://download.qgis.org/downloads/qgis-archive-keyring.gpg</code></pre>
+        </li>
+
+        <li>Create a file <code>qgis.sources</code> to define the repository. Find your distribution's codename by running:
+            <pre><code>lsb_release -cs</code></pre>
+            OR
+            <pre><code>. /etc/os-release; echo "$UBUNTU_CODENAME"</code></pre>
+            Add the following content to <code>qgis.sources</code>:
+            <pre><code>
+Types: deb deb-src
+URIs: https://qgis.org/debian
+Suites: your-distributions-codename
+Architectures: amd64
+Components: main
+Signed-By: /etc/apt/keyrings/qgis-archive-keyring.gpg
+            </code></pre>
+        </li>
+
+        <li>Update apt and verify the QGIS key:
+            <pre><code>sudo apt update</code></pre>
+            <pre><code>wget https://download.qgis.org/downloads/qgis-archive-keyring.gpg</code></pre>
+            <pre><code>gpg --no-default-keyring --keyring ./qgis-archive-keyring.gpg --list-keys</code></pre>
+        </li>
+
+        <li>Copy the QGIS key:
+            <pre><code>sudo mkdir -m755 -p /etc/apt/keyrings</code></pre>
+            <pre><code>sudo cp qgis-archive-keyring.gpg /etc/apt/keyrings/qgis-archive-keyring.gpg</code></pre>
+        </li>
+
+        <li>Ensure the key is downloaded to the correct location:
+            <pre><code>sudo wget -O /etc/apt/keyrings/qgis-archive-keyring.gpg https://download.qgis.org/downloads/qgis-archive-keyring.gpg</code></pre>
+        </li>
+
+        <li>Install QGIS build dependencies:
+            <pre><code>sudo apt build-dep qgis</code></pre>
+        </li>
+
+        <li>Set up the QGIS repository and clone QGIS from GitHub:
+            <pre><code>cd</code></pre>
+            <pre><code>mkdir -p dev/cpp</code></pre>
+            <pre><code>cd dev/cpp</code></pre>
+            <pre><code>ls</code></pre>
+            <pre><code>sudo apt install git</code></pre>
+            <pre><code>sudo apt update</code></pre>
+            <pre><code>clear</code></pre>
+            <pre><code>git clone --depth 1 https://github.com/qgis/QGIS.git</code></pre>
+            <pre><code>cd QGIS</code></pre>
+            <pre><code>mkdir QGIS-BUILD</code></pre>
+            <pre><code>cd QGIS-BUILD/</code></pre>
+            <pre><code>sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable</code></pre>
+            <pre><code>sudo apt-get update</code></pre>
+            <pre><code>sudo apt-get install pdal</code></pre>
+        </li>
+
+        <li>Install necessary dependencies:
+            <pre><code>sudo apt-get install -y apt-transport-https ca-certificates clazy cmake curl dh-python git gdal-bin gnupg gpsbabel graphviz ...</code></pre>
+        </li>
+
+        <li>At the <code>QGIS-BUILD</code> directory, clean any <code>CMakeCache</code> file. The folder must be empty to start building QGIS:
+            <pre><code>cmake ..</code></pre>
+            <pre><code>make</code></pre>
+            <pre><code>make install</code></pre>
+        </li>
+
+        <li>The libraries and includes will be located in <code>/usr/local</code>:
+            <pre><code>/usr/local/include/qgis</code></pre>
+            <pre><code>/usr/local/lib</code></pre>
+        </li>
+    </ol>
+
+    <h2>PART C: Qt and QGIS Integration</h2>
+
+    <h3><code>.pro</code> File Configuration</h3>
+    <pre><code>
+CONFIG += c17
+
+INCLUDEPATH += /usr/local/include/qgis
+
+LIBS += -L/usr/local/lib -lqgis_core -lqgis_gui -lqgis_app
+    </code></pre>
+
+    <h3>Sample Application</h3>
+    <p>Here’s an example of how to set up the <code>.pro</code> file for your Qt application:</p>
+    <pre><code>
+QT       += core gui xml
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+CONFIG += c++17
+INCLUDEPATH += /usr/local/include/qgis
+
+LIBS += -L/usr/local/lib -lqgis_core -lqgis_gui -lqgis_app
+# You can make your code fail to compile if it uses deprecated APIs.
+# In order to do so, uncomment the following line.
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+
+SOURCES += \
+    main.cpp \
+    mainwindow.cpp
+
+HEADERS += \
+    mainwindow.h
+
+FORMS += \
+    mainwindow.ui
+
+# Default rules for deployment.
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target
+    </code></pre>
+
+    <h3><code>main.cpp</code> Code Example</h3>
+    <pre><code>
+#include <QApplication>
+#include "qgsapplication.h"
+#include "qgsmapcanvas.h"
+#include "qgsproviderregistry.h"
+#include <QMessageBox>
+#include <QDebug>
+
+int main(int argc, char *argv[]) {
+    // 1. Create QApplication FIRST (Crucial!)
+    QApplication a(argc, argv);  // This MUST be the very first Qt-related line
+
+    // 2. QGIS Application Initialization
+    QgsApplication* qgsApp = new QgsApplication(argc, argv, true);
+
+    QString prefixPath = "/usr"; // Or your actual path
+    qgsApp->setPrefixPath(prefixPath, true);
+
+    qgsApp->init();
+
+    // 3. Check Initialization (AFTER QApplication creation)
+    if (QgsApplication::instance() == nullptr) {
+        QMessageBox::critical(nullptr, "Error", "QGIS initialization failed!");
+        return 1;
+    }
+
+    QStringList providers = QgsProviderRegistry::instance()->providerList();
+    if (providers.isEmpty()) {
+        QMessageBox::warning(nullptr, "Warning", "No QGIS providers found. Check prefix path.");
+    } else {
+        qDebug() << "Providers:" << providers;
+    }
+
+    QgsMapCanvas* mapCanvas = new QgsMapCanvas(); // Now safe to use QGIS/Qt classes
+    if (mapCanvas == nullptr) {
+        QMessageBox::critical(nullptr, "Error", "Failed to create map canvas.");
+        delete qgsApp;
+        return 1;
+    }
+    delete mapCanvas;
+
+    // qDebug() << "QGIS Version:" << QGIS_VERSION; // Assuming you defined QGIS_VERSION in .pro
+
+    QMessageBox::information(nullptr, "Success", "QGIS initialized successfully!");
+
+
+    // 4. Your Application Logic Here...
+
+    qgsApp->exit();
+
+    return a.exec(); // Start the Qt event loop (important!)
+}
+    </code></pre>
+
+</body>
+</html>
+
