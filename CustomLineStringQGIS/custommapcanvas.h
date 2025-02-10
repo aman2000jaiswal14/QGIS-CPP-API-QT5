@@ -5,10 +5,8 @@
 #include <QWidget>
 #include <qgsmapcanvas.h>
 #include <qgsvectorlayer.h>
-#include <drawpointtool.h>
-#include "qgssymbol.h"
-#include "qgssinglesymbolrenderer.h"
-#include "qgsmarkersymbollayer.h"
+#include <drawlinestringtool.h>
+#include "qgsrulebasedlabeling.h"
 class CustomMapCanvas : public QgsMapCanvas
 {
     Q_OBJECT

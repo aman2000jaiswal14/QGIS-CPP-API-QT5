@@ -13,6 +13,10 @@
 #include <QVariant>
 #include <qgspointxy.h>
 #include <qgsmapmouseevent.h>
+
+
+
+
 class DrawPointTool : public QgsMapTool
 {
     Q_OBJECT
