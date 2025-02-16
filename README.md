@@ -49,8 +49,8 @@
 3. Update apt and verify the QGIS key:
     ```bash
     sudo apt update
-    wget https://download.qgis.org/downloads/qgis-archive-keyring.gpg
-    gpg --no-default-keyring --keyring ./qgis-archive-keyring.gpg --list-keys
+    sudo wget https://download.qgis.org/downloads/qgis-archive-keyring.gpg
+    sudo gpg --no-default-keyring --keyring ./qgis-archive-keyring.gpg --list-keys
     ```
 
 4. Copy the QGIS key:
