@@ -36,7 +36,7 @@
     . /etc/os-release; echo "$UBUNTU_CODENAME"
     ```
 
-   Add the following content to `qgis.sources`:
+   Add the following content to `/etc/apt/sources.list.d/qgis.sources`:
     ```text
     Types: deb deb-src
     URIs: https://qgis.org/debian
