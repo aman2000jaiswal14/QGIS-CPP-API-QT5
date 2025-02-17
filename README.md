@@ -90,17 +90,18 @@
 
 8. Install necessary dependencies:
     ```bash
-    sudo apt-get install -y apt-transport-https ca-certificates clazy cmake curl dh-python git gdal-bin gnupg gpsbabel graphviz \
-    libaio1 libdraco4 libexiv2-27 libfcgi0ldbl libgsl27 libprotobuf-lite17 libqca-qt5-2-plugins libqt53dextras5 \
-    libqt53drender5 libqt5concurrent5 libqt5keychain1 libqt5positioning5 libqt5multimedia5 libqt5qml5 \
-    libqt5quick5 libqt5quickcontrols2-5 libqt5quickwidgets5 libqt5serialport5 libqt5sql5-odbc libqt5sql5-sqlite \
-    libqt5webkit5 libqwt-qt5-6 libspatialindex6 libsqlite3-mod-spatialite libzip4 lighttpd locales pdal \
-    poppler-utils python3-future python3-gdal python3-mock python3-nose2 python3-numpy python3-owslib python3-pip \
-    python3-psycopg2 python3-pyproj python3-pyqt5 python3-pyqt5.qsci python3-pyqt5.qtsql python3-pyqt5.qtsvg \
-    python3-pyqt5.qtwebkit python3-pyqt5.qtpositioning python3-pyqt5.qtmultimedia python3-pyqt5.qtserialport \
-    python3-sip python3-termcolor python3-yaml qpdf qt3d-assimpsceneimport-plugin qt3d-defaultgeometryloader-plugin \
-    qt3d-gltfsceneio-plugin qt3d-scene2d-plugin qt5-image-formats-plugins saga supervisor unzip xauth xfonts-100dpi \
-    xfonts-75dpi xfonts-base xfonts-scalable xvfb ocl-icd-libopencl1
+sudo apt-get install -y apt-transport-https ca-certificates clazy cmake curl dh-python git gdal-bin gnupg gpsbabel graphviz \
+libexiv2-27 libfcgi0ldbl libgsl27 libqca-qt5-2-plugins libqt53dextras5 libqt53drender5 libqt5concurrent5 \
+libqt5keychain1 libqt5positioning5 libqt5multimedia5 libqt5qml5 libqt5quick5 libqt5quickcontrols2-5 \
+libqt5quickwidgets5 libqt5serialport5 libqt5sql5-odbc libqt5sql5-sqlite libqt5webkit5 libqwt-qt5-6 \
+libspatialindex6 libsqlite3-mod-spatialite libzip4 lighttpd locales pdal poppler-utils python3-future \
+python3-gdal python3-mock python3-nose2 python3-numpy python3-owslib python3-pip python3-psycopg2 \
+python3-pyproj python3-pyqt5 python3-pyqt5.qsci python3-pyqt5.qtsql python3-pyqt5.qtsvg python3-pyqt5.qtwebkit \
+python3-pyqt5.qtpositioning python3-pyqt5.qtmultimedia python3-pyqt5.qtserialport python3-sip python3-termcolor \
+python3-yaml qpdf qt3d-assimpsceneimport-plugin qt3d-defaultgeometryloader-plugin qt3d-gltfsceneio-plugin \
+qt3d-scene2d-plugin qt5-image-formats-plugins saga supervisor unzip xauth xfonts-100dpi xfonts-75dpi \
+xfonts-base xfonts-scalable xvfb ocl-icd-libopencl1
+
     ```
 
 9. At the `QGIS-BUILD` directory, clean any `CMakeCache` file. The folder must be empty to start building QGIS:
