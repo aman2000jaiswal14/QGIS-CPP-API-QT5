@@ -107,7 +107,7 @@
     ```bash
     cmake ..
     make
-    make install
+    sudo make install
     ```
 
 10. The libraries and includes will be located in `/usr/local`:
