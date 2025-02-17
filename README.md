@@ -86,6 +86,9 @@
     sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
     sudo apt-get update
     sudo apt-get install pdal
+    sudo apt-get update
+    sudo apt-get install libpdal-dev
+
     ```
 
 8. Install necessary dependencies:
