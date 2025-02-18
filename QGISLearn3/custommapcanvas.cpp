@@ -1,20 +1,88 @@
 #include "custommapcanvas.h"
 #include <QLabel>
-#include "qgslabelfeature.h"
-#include "qgssinglesymbolrenderer.h"
-#include "qgssymbol.h"
-#include "qgsmarkersymbol.h"
-#include "qgsmarkersymbollayer.h"
+
 #include <QMap>
+#include "qgsrasterlayer.h"
 
-
+/*
+  new ImageLayer({
+    extent: [-13884991, 2870341, -7455066, 6338219],
+    source: new ImageWMS({
+      url: 'https://ahocevar.com/geoserver/wms',
+      params: {'LAYERS': 'topp:states'},
+      ratio: 1,
+      serverType: 'geoserver',
+    }),
+  }),
+];
+ */
 CustomMapCanvas::CustomMapCanvas() {
     // this->setCanvasColor(Qt::green);
+
+
+    // wms start
+/*
+    QString wmsUrl = "https://ahocevar.com/geoserver/wms"; // Base URL
+    QString wmsLayerName = "topp:states"; // Exact layer name (important!)
+
+    // Construct the WMS URI
+    QString uri = QString("%1?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=%2&STYLES=&FORMAT=image/png&CRS=EPSG:4326").arg(wmsUrl, wmsLayerName);
+
+    QgsRasterLayer *wmsLayer = new QgsRasterLayer(uri, wmsLayerName);
+
+    if (wmsLayer->isValid()) {
+        qDebug() << "WMS layer loaded successfully!";
+
+    } else {
+        qDebug() << "Error loading WMS layer: " << wmsLayer->error().message();
+        delete wmsLayer;
+    }
+
+*/
+
+
+    // Layer 1: Pixelmap (TileWMS in JavaScript)
+                QString pixelmapUrl = "https://wms.geo.admin.ch/";
+    QString pixelmapLayerName = "ch.swisstopo.pixelkarte-farbe-pk1000.noscale";
+    QString pixelmapUri = QString("%1?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=%2&FORMAT=image/jpeg&CRS=EPSG:3857").arg(pixelmapUrl, pixelmapLayerName); // Note: EPSG:3857 often used for web maps
+
+    QgsRasterLayer *pixelmapLayer = new QgsRasterLayer(pixelmapUri, "Pixelmap 1:1000000"); // Give it a descriptive name
+
+    if (pixelmapLayer->isValid()) {
+        qDebug() << "Pixelmap layer loaded successfully!";
+
+    } else {
+        qDebug() << "Error loading pixelmap layer: " << pixelmapLayer->error().message();
+        delete pixelmapLayer;
+    }
+
+
+    // Layer 2: Flood Alert (ImageWMS in JavaScript)
+    QString floodAlertUrl = "https://wms.geo.admin.ch/";
+    QString floodAlertLayerName = "ch.bafu.hydroweb-warnkarte_national";
+    QString floodAlertUri = QString("%1?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=%2&FORMAT=image/png&CRS=EPSG:3857").arg(floodAlertUrl, floodAlertLayerName);  // Adjust CRS if needed
+
+    QgsRasterLayer *floodAlertLayer = new QgsRasterLayer(floodAlertUri, "Flood Alert");
+
+    if (floodAlertLayer->isValid()) {
+        qDebug() << "Flood alert layer loaded successfully!";
+
+
+    } else {
+        qDebug() << "Error loading flood alert layer: " << floodAlertLayer->error().message();
+        delete floodAlertLayer;
+    }
+
+
+
+
+    // -- end of wms
+    QString svgPath = "/home/aman/map1/plane.svg";
 
     // Create a vector layer
     QgsVectorLayer* vectorLayer = new QgsVectorLayer("Point?crs=EPSG:4326", "PointsLayer", "memory");
     QgsVectorLayer* mapLayer = new QgsVectorLayer("/usr/local/share/qgis/resources/data/world_map.gpkg", "World Map", "ogr");
-
+    // wmsLayer->setCrs(mapLayer->crs());
     vectorLayer->setCrs(mapLayer->crs());
 
     // Create fields with data types specified
@@ -67,12 +135,54 @@ CustomMapCanvas::CustomMapCanvas() {
     QgsSingleSymbolRenderer* renderer = dynamic_cast<QgsSingleSymbolRenderer*>(vectorLayer->renderer());
     QgsSymbol* symbol = renderer->symbol();
 
-    QgsSimpleMarkerSymbolLayer* markerLayer = dynamic_cast<QgsSimpleMarkerSymbolLayer*>(symbol->symbolLayer(0));
-    qDebug()<<(markerLayer == NULL);
-    // markerSymbol->setSize(10); // Set size of the triangle
-    // markerSymbol->setColor(QColor(255, 0, 0)); //
-    markerLayer->setShape(Qgis::MarkerShape::Triangle);
-    markerLayer->setSize(5);
+
+    svgLayer = new QgsSvgMarkerSymbolLayer(svgPath);
+    if (svgLayer==NULL) {
+        qDebug() << "Error loading SVG file:" << svgPath;
+        return;
+    }
+
+    connect(this, &QgsMapCanvas::scaleChanged, this, [=](double scale) {
+        // Adjust marker size based on the scale of the map
+        double zoomFactor = 200000000000.0 / scale ;  // You can fine-tune this factor based on your needs
+        qDebug()<<"initial :  "<<zoomFactor<<scale;
+        // Set the size of the SVG marker layer relative to zoom
+        svgLayer->setSize(qMin(zoomFactor,10.0));  // Multiply by a constant factor to scale
+
+        vectorLayer->triggerRepaint();
+    });
+
+
+    // Initial update when canvas is created
+    double initialScale = this->scale();
+    double zoomFactor  = 200000000000.0 / initialScale;
+
+    qDebug()<<"initial :  "<<zoomFactor<<initialScale;
+    svgLayer->setSize(zoomFactor);  // Adjust the initial size based on zoom level
+
+
+
+
+
+
+
+
+
+
+
+
+    // symbol->insertSymbolLayer(0,svgLayer);
+    // symbol->appendSymbolLayer(svgLayer);
+    symbol->changeSymbolLayer(0,svgLayer);
+
+
+
+    // QgsSimpleMarkerSymbolLayer* markerLayer = dynamic_cast<QgsSimpleMarkerSymbolLayer*>(symbol->symbolLayer(0));
+    // qDebug()<<(markerLayer == NULL);
+    // // markerSymbol->setSize(10); // Set size of the triangle
+    // // markerSymbol->setColor(QColor(255, 0, 0)); //
+    // markerLayer->setShape(Qgis::MarkerShape::Triangle);
+    // markerLayer->setSize(5);
     vectorLayer->triggerRepaint();
 
     // --- Labeling Setup ---
@@ -88,6 +198,7 @@ CustomMapCanvas::CustomMapCanvas() {
     textFormat.setSize(10);  // Set font size
     textFormat.setColor(QColor(255, 0, 0));  // Set font color to black
     labelSettings.setFormat(textFormat);
+
 
 
     // Create labeling object for the vector layer
@@ -123,7 +234,25 @@ CustomMapCanvas::CustomMapCanvas() {
     // Initialize the canvas and set up the tool
 
     this->setExtent(QgsRectangle(-180, -90, 180, 90)); // Set extent to world bounds
-    this->setLayers({vectorLayer,mapLayer});
+    this->setLayers({vectorLayer,pixelmapLayer,floodAlertLayer,mapLayer});
+
+
+    // Zoom to the flood alert layer's extent:
+    if (floodAlertLayer->isValid()) { // Check if the layer is valid
+        QgsRectangle extent = floodAlertLayer->extent(); // Get the extent of the flood alert layer
+
+        if (!extent.isNull()) { // Check if the extent is valid (not null)
+            this->setExtent(extent); // Set the canvas extent to the layer's extent
+            this->refresh(); // Refresh the canvas to show the new extent
+        } else {
+            qDebug() << "Flood alert layer extent is invalid (null).";
+            this->zoomToFullExtent(); // Fallback to full extent if extent is invalid
+        }
+    } else {
+        qDebug() << "Flood alert layer is not valid. Cannot zoom to extent.";
+        this->zoomToFullExtent(); // Fallback to full extent if layer is invalid
+    }
+
 
 
 

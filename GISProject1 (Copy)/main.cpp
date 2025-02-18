@@ -4,11 +4,12 @@
 #include <qgsapplication.h>
 int main(int argc, char *argv[])
 {
+    QApplication a(argc,argv);
     QgsApplication qgisapp(argc,argv,true);
     qgisapp.setPrefixPath("/usr/local");
     qgisapp.init();
     qDebug()<<"App Started...";
     MainWindow w;
     w.show();
-    return qgisapp.exec();
+    return a.exec();
 }
