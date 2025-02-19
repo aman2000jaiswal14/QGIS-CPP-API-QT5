@@ -9,6 +9,7 @@
 #include "qgssymbol.h"
 #include "qgssinglesymbolrenderer.h"
 #include "qgsmarkersymbollayer.h"
+#include <QDebug>
 class CustomMapCanvas : public QgsMapCanvas
 {
     Q_OBJECT
