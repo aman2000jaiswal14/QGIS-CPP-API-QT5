@@ -15,8 +15,8 @@ CustomMapCanvas::CustomMapCanvas() {
     project = QgsProject::instance();
     QgsCoordinateReferenceSystem crs("EPSG:4326");
     QgsProject::instance()->setCrs(crs);
-
-
+    this->setCachingEnabled(true);
+    this->setParallelRenderingEnabled(true); // Enable parallel rendering . This will solve the problem of flickering
     // Create a QGIS layer tree
     QgsLayerTree *layerTree = QgsProject::instance()->layerTreeRoot();
     layerTree->addGroup("Group 1");
