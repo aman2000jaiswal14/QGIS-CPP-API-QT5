@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(canvas);  // Make the canvas the main widget
 
     // Load a raster image (GeoTIFF)
-    QString filePath = "/home/aman/QGIS_PROJECT/LoadRasterMap/land_shallow_topo_2048.tif";//QFileDialog::getOpenFileName(this, "Open TIFF File", "", "TIFF Files (*.tiff *.tif)");
+    QString filePath = "/home/aman/Downloads/Data_Developing3d/Data_Developing3d/DEM.tif";//QFileDialog::getOpenFileName(this, "Open TIFF File", "", "TIFF Files (*.tiff *.tif)");
     qDebug()<<filePath;
     if (!filePath.isEmpty()) {
         loadImage(filePath);
